@@ -1,16 +1,19 @@
-# udparty
+# UDParty
 
-A new Flutter project.
+Aplicación Flutter Cliente/Servidor por UDP Multicast
 
-## Getting Started
+## App Servidor o "Control remoto"
 
-This project is a starting point for a Flutter application.
+La app que funcione como control remoto mostrará un panel con controles que permitan enviar instrucciones a las apps que estén "escuchando".
 
-A few resources to get you started if this is your first Flutter project:
+## App Clientes
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Las apps clientes "escuchan" instrucciones y reaccionan de acuerdo a las instrucciones que reciban.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## ¿Qué tipo de cosas podrán hacer las apps clientes?
+
+Mostrar colores o efectos en pantalla, encender/parpadear el flash, reproducir sonidos, etc. 
+
+## Requicitos
+
+- Tanto la app Servidor como los Clientes deben estar conectados al mismo WiFi.
