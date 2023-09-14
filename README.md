@@ -22,3 +22,5 @@ Mostrar colores o efectos en pantalla, encender/parpadear el flash, reproducir s
 ### TODO
 
 Actualmente la app sólo implementa un mensaje de texto genérico por multicast y su recepción, es decir, sólo es la base de la app.
+
+![](/home/user/FlutterProjects/udparty/assets/img/screen.jpg)
