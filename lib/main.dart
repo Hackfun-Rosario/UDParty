@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -32,10 +33,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _recibido = '';
+  String _log = '';
   String _myIP = '';
   UDP? sender;
   UDP? receiver;
+  Endpoint? multicastEndpoint;
 
   Future<void> _getMyIp() async {
     final info = NetworkInfo();
@@ -49,27 +51,59 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _initSender() async {
     log('Initializing Sender');
-    sender = await UDP.bind(Endpoint.any(port: const Port(65000)));
+    setState(() {
+      _log += '\nInitializing Sender';
+    });
+    // sender = await UDP.bind(Endpoint.any(port: const Port(65000)));
+    sender = await UDP.bind(Endpoint.any());
+
     log('Sender initialized');
+    setState(() {
+      _log += '\nSender initialized';
+    });
+  }
+
+  Future<void> _sendMulticast(String msg) async {
+    // var dataLength = await sender?.send(
+    //     msg.codeUnits, Endpoint.broadcast(port: const Port(65001)));
+    sender?.send("Hello world!".codeUnits, multicastEndpoint!);
+
+    log('Message sent');
+    setState(() {
+      _log += '\nMessage sent';
+    });
   }
 
   Future<void> _initReceiver() async {
     log('Initializing Receiver');
-    receiver = await UDP.bind(Endpoint.loopback(port: const Port(65002)));
+    setState(() {
+      _log += '\nInitializing Receiver';
+    });
+    // receiver = await UDP.bind(Endpoint.loopback(port: const Port(65001)));
+    receiver = await UDP.bind(multicastEndpoint!);
 
     // receiving\listening
-    receiver?.asStream(timeout: const Duration(seconds: 20)).listen((datagram) {
-      var str = String.fromCharCodes(datagram!.data);
-      log('Received message: $str');
-      _recibido = str;
+    // receiver?.asStream(timeout: const Duration(seconds: 20)).listen((datagram) {
+    //   var str = String.fromCharCodes(datagram!.data);
+    //   log('Received message: $str');
+    //   setState(() {
+    //     _log += '\nReceived message: $str';
+    //   });
+    // });
+    receiver?.asStream().listen((datagram) {
+      if (datagram != null) {
+        var str = String.fromCharCodes(datagram.data);
+        setState(() {
+          _log += '\nReceived: $str';
+        });
+        log('Received: $str');
+      }
     });
-    log('Receiver initialized');
-  }
 
-  Future<void> _sendUDPBroadcast(String msg) async {
-    var dataLength = await sender?.send(
-        msg.codeUnits, Endpoint.broadcast(port: const Port(65001)));
-    log('$dataLength bytes sent');
+    log('Receiver initialized');
+    setState(() {
+      _log += '\nReceiver initialized';
+    });
   }
 
   void _closeSender() {
@@ -82,15 +116,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    super.initState();
     _getMyIp();
-    _initSender();
-    _initReceiver();
+    multicastEndpoint = Endpoint.multicast(InternetAddress("239.1.2.3"),
+        port: const Port(54321));
+    // _initSender();
+    // _initReceiver();
   }
 
   @override
   void dispose() {
-    _closeSender();
-    _closeReceiver();
+    try {
+      _closeSender();
+      _closeReceiver();
+    } catch (e) {
+      log(e.toString());
+    }
+    super.dispose();
   }
 
   @override
@@ -102,33 +144,46 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                    onPressed: () {
-                      _sendUDPBroadcast('Test');
+                    onPressed: () async {
+                      await _initSender();
                     },
-                    child: const Text('Enviar')),
+                    child: const Text('Init as sender')),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                    onPressed: () async {
+                      await _sendMulticast('Test');
+                    },
+                    child: const Text('Send broadcast'))
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                    onPressed: () async {
+                      await _initReceiver();
+                    },
+                    child: const Text('Init as receiver')),
+                const SizedBox(width: 10),
                 ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        _recibido = '';
+                        _log = '';
                       });
                     },
-                    child: const Text('Limpiar'))
+                    child: const Text('Clear'))
               ],
             ),
-            const Text('Recibido:'),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              _recibido,
-              style: const TextStyle(fontSize: 20),
-            ),
+            const SizedBox(height: 20),
+            const Text('Log:'),
+            Text(_log),
           ],
         ),
       ),
