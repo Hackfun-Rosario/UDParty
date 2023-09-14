@@ -41,7 +41,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _getMyIp() async {
     final info = NetworkInfo();
-
     info.getWifiIP().then((value) {
       setState(() {
         _myIP = value ?? '';
@@ -50,57 +49,35 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _initSender() async {
-    log('Initializing Sender');
     setState(() {
       _log += '\nInitializing Sender';
     });
-    // sender = await UDP.bind(Endpoint.any(port: const Port(65000)));
     sender = await UDP.bind(Endpoint.any());
-
-    log('Sender initialized');
     setState(() {
       _log += '\nSender initialized';
     });
   }
 
   Future<void> _sendMulticast(String msg) async {
-    // var dataLength = await sender?.send(
-    //     msg.codeUnits, Endpoint.broadcast(port: const Port(65001)));
     sender?.send("Hello world!".codeUnits, multicastEndpoint!);
-
-    log('Message sent');
     setState(() {
       _log += '\nMessage sent';
     });
   }
 
   Future<void> _initReceiver() async {
-    log('Initializing Receiver');
     setState(() {
       _log += '\nInitializing Receiver';
     });
-    // receiver = await UDP.bind(Endpoint.loopback(port: const Port(65001)));
     receiver = await UDP.bind(multicastEndpoint!);
-
-    // receiving\listening
-    // receiver?.asStream(timeout: const Duration(seconds: 20)).listen((datagram) {
-    //   var str = String.fromCharCodes(datagram!.data);
-    //   log('Received message: $str');
-    //   setState(() {
-    //     _log += '\nReceived message: $str';
-    //   });
-    // });
     receiver?.asStream().listen((datagram) {
       if (datagram != null) {
         var str = String.fromCharCodes(datagram.data);
         setState(() {
           _log += '\nReceived: $str';
         });
-        log('Received: $str');
       }
     });
-
-    log('Receiver initialized');
     setState(() {
       _log += '\nReceiver initialized';
     });
@@ -120,8 +97,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _getMyIp();
     multicastEndpoint = Endpoint.multicast(InternetAddress("239.1.2.3"),
         port: const Port(54321));
-    // _initSender();
-    // _initReceiver();
   }
 
   @override
