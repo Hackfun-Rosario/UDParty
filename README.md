@@ -24,3 +24,11 @@ Mostrar colores o efectos en pantalla, encender/parpadear el flash, reproducir s
 Actualmente la app sólo implementa un mensaje de texto genérico por multicast y su recepción, es decir, sólo es la base de la app.
 
 ![](assets/img/screen.jpg)
+
+[ ] Diferenciar pantalla de control y pantalla de cliente
+
+[ ] Mecanismo de reducción de pérdida de datos
+
+[ ] Definir e implementar efectos
+
+[ ] Definir método de distribución (Play, F-Droid, descarga de APK...?)
