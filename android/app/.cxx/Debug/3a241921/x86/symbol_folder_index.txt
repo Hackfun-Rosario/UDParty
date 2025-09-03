@@ -1,0 +1,1 @@
+/home/user/dev/FlutterProjects/UDParty/build/app/intermediates/cxx/Debug/3a241921/obj/x86

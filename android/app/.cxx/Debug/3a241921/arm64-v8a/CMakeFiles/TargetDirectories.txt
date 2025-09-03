@@ -1,0 +1,2 @@
+/home/user/dev/FlutterProjects/UDParty/android/app/.cxx/Debug/3a241921/arm64-v8a/CMakeFiles/edit_cache.dir
+/home/user/dev/FlutterProjects/UDParty/android/app/.cxx/Debug/3a241921/arm64-v8a/CMakeFiles/rebuild_cache.dir
