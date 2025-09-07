@@ -38,6 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   UDP? sender;
   UDP? receiver;
   Endpoint? multicastEndpoint;
+  int counter = 0;
 
   Future<void> _getMyIp() async {
     final info = NetworkInfo();
@@ -59,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _sendMulticast(String msg) async {
-    sender?.send("Hello world!".codeUnits, multicastEndpoint!);
+    sender?.send("${(counter++)}".codeUnits, multicastEndpoint!);
     setState(() {
       _log += '\nMessage sent';
     });
@@ -95,8 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _getMyIp();
-    multicastEndpoint = Endpoint.multicast(InternetAddress("239.1.2.3"),
-        port: const Port(54321));
+    multicastEndpoint = Endpoint.broadcast(port: const Port(12345));
   }
 
   @override
