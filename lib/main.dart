@@ -34,53 +34,26 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String _log = '';
-  String _myIP = '';
   UDP? sender;
   UDP? receiver;
   Endpoint? multicastEndpoint;
   int counter = 0;
-
-  Future<void> _getMyIp() async {
-    final info = NetworkInfo();
-    info.getWifiIP().then((value) {
-      setState(() {
-        _myIP = value ?? '';
-      });
-    });
-  }
+  bool status = false;
 
   Future<void> _initSender() async {
     setState(() {
-      _log += '\nInitializing Sender';
+      _log += '\nInitializing...';
     });
     sender = await UDP.bind(Endpoint.any());
     setState(() {
-      _log += '\nSender initialized';
+      _log += '\Initialized';
     });
   }
 
   Future<void> _sendMulticast(String msg) async {
-    sender?.send("${(counter++)}".codeUnits, multicastEndpoint!);
+    sender?.send(msg.codeUnits, multicastEndpoint!);
     setState(() {
-      _log += '\nMessage sent';
-    });
-  }
-
-  Future<void> _initReceiver() async {
-    setState(() {
-      _log += '\nInitializing Receiver';
-    });
-    receiver = await UDP.bind(multicastEndpoint!);
-    receiver?.asStream().listen((datagram) {
-      if (datagram != null) {
-        var str = String.fromCharCodes(datagram.data);
-        setState(() {
-          _log += '\nReceived: $str';
-        });
-      }
-    });
-    setState(() {
-      _log += '\nReceiver initialized';
+      _log += '\nSent: $msg';
     });
   }
 
@@ -88,22 +61,20 @@ class _MyHomePageState extends State<MyHomePage> {
     sender?.close();
   }
 
-  void _closeReceiver() {
-    receiver?.close();
-  }
-
   @override
   void initState() {
     super.initState();
-    _getMyIp();
     multicastEndpoint = Endpoint.broadcast(port: const Port(12345));
+    _initSender().then((_) {
+      status = true;
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
     try {
       _closeSender();
-      _closeReceiver();
     } catch (e) {
       log(e.toString());
     }
@@ -115,52 +86,69 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('UDParty - $_myIP'),
+        title: Text('UDParty'),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                    onPressed: () async {
-                      await _initSender();
-                    },
-                    child: const Text('Init as sender')),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                    onPressed: () async {
-                      await _sendMulticast('Test');
-                    },
-                    child: const Text('Send broadcast'))
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                    onPressed: () async {
-                      await _initReceiver();
-                    },
-                    child: const Text('Init as receiver')),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _log = '';
-                      });
-                    },
-                    child: const Text('Clear'))
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Text('Log:'),
-            Text(_log),
-          ],
-        ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              status
+                  ? ElevatedButton(
+                      onPressed: () async {
+                        await _sendMulticast('r');
+                      },
+                      child: const Text('Red'))
+                  : SizedBox.shrink(),
+              const SizedBox(width: 10),
+              status
+                  ? ElevatedButton(
+                      onPressed: () async {
+                        await _sendMulticast('g');
+                      },
+                      child: const Text('Green'))
+                  : SizedBox.shrink(),
+              const SizedBox(width: 10),
+              status
+                  ? ElevatedButton(
+                      onPressed: () async {
+                        await _sendMulticast('b');
+                      },
+                      child: const Text('Blue'))
+                  : SizedBox.shrink(),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _log = '';
+                    });
+                  },
+                  child: const Text('Clear')),
+              SizedBox(width: 10),
+              Text('Total: $counter')
+            ],
+          ),
+          Flexible(
+              child: SingleChildScrollView(
+                  reverse: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  child: SizedBox(
+                      width: double.infinity,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          _log,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      )))),
+        ],
       ),
     );
   }
