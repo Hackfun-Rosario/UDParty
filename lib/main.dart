@@ -91,31 +91,44 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               status
                   ? ElevatedButton(
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange)),
                       onPressed: () async {
                         await _sendMulticast('r');
                       },
-                      child: const Text('Red'))
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: const Text('Rojo', style: TextStyle(color: Colors.white),),
+                      ))
                   : SizedBox.shrink(),
               const SizedBox(width: 10),
               status
                   ? ElevatedButton(
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.green)),
                       onPressed: () async {
                         await _sendMulticast('g');
                       },
-                      child: const Text('Green'))
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: const Text('Verde', style: TextStyle(color: Colors.white),),
+                  ))
                   : SizedBox.shrink(),
               const SizedBox(width: 10),
               status
                   ? ElevatedButton(
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.blue)),
                       onPressed: () async {
                         await _sendMulticast('b');
                       },
-                      child: const Text('Blue'))
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: const Text('Azúl', style: TextStyle(color: Colors.white),),
+                  ))
                   : SizedBox.shrink(),
             ],
           ),
