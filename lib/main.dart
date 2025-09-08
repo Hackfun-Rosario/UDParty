@@ -99,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ? ElevatedButton(
                   style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange)),
                       onPressed: () async {
-                        await _sendMulticast('r');
+                        await _sendMulticast('255,0,0,3');
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ? ElevatedButton(
                   style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.green)),
                       onPressed: () async {
-                        await _sendMulticast('g');
+                        await _sendMulticast('0,255,0,3');
                       },
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
@@ -123,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ? ElevatedButton(
                   style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.blue)),
                       onPressed: () async {
-                        await _sendMulticast('b');
+                        await _sendMulticast('0,0,255,3');
                       },
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
