@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'UDParty',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
       home: const MyHomePage(),
@@ -37,23 +37,26 @@ class _MyHomePageState extends State<MyHomePage> {
   UDP? sender;
   UDP? receiver;
   Endpoint? multicastEndpoint;
-  int counter = 0;
+  int _counter = 0;
   bool status = false;
+  String? _inputText;
+  int _repeat = 1;
+  int _delay = 100;
 
   Future<void> _initSender() async {
     setState(() {
-      _log += '\nInitializing...';
+      _log += '\nInicializando...';
     });
     sender = await UDP.bind(Endpoint.any());
     setState(() {
-      _log += '\Initialized';
+      _log += '\nListo!';
     });
   }
 
   Future<void> _sendMulticast(String msg) async {
     sender?.send(msg.codeUnits, multicastEndpoint!);
     setState(() {
-      _log += '\nSent: $msg';
+      _log += '\nEnviado: $msg';
     });
   }
 
@@ -91,46 +94,144 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              status
-                  ? ElevatedButton(
-                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange)),
-                      onPressed: () async {
-                        await _sendMulticast('255,0,0,3');
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: const Text('Rojo', style: TextStyle(color: Colors.white),),
-                      ))
-                  : SizedBox.shrink(),
-              const SizedBox(width: 10),
-              status
-                  ? ElevatedButton(
-                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.green)),
-                      onPressed: () async {
-                        await _sendMulticast('0,255,0,3');
-                      },
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: const Text('Verde', style: TextStyle(color: Colors.white),),
-                  ))
-                  : SizedBox.shrink(),
-              const SizedBox(width: 10),
-              status
-                  ? ElevatedButton(
-                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.blue)),
-                      onPressed: () async {
-                        await _sendMulticast('0,0,255,3');
-                      },
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: const Text('Azúl', style: TextStyle(color: Colors.white),),
-                  ))
-                  : SizedBox.shrink(),
-            ],
+          // SizedBox(height: 10),
+          // Text(
+          //   'Blink',
+          //   style: Theme.of(context).textTheme.displaySmall,
+          // ),
+          // SizedBox(height: 10),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     status
+          //         ? ElevatedButton(
+          //             style: ButtonStyle(
+          //                 backgroundColor: MaterialStateProperty.all<Color>(
+          //                     Colors.deepOrange)),
+          //             onPressed: () async {
+          //               await _sendMulticast('255,0,0,3');
+          //             },
+          //             child: Padding(
+          //               padding: const EdgeInsets.all(20.0),
+          //               child: const Text(
+          //                 'Rojo',
+          //                 style: TextStyle(color: Colors.white),
+          //               ),
+          //             ))
+          //         : SizedBox.shrink(),
+          //     const SizedBox(width: 10),
+          //     status
+          //         ? ElevatedButton(
+          //             style: ButtonStyle(
+          //                 backgroundColor:
+          //                     MaterialStateProperty.all<Color>(Colors.green)),
+          //             onPressed: () async {
+          //               await _sendMulticast('0,255,0,3');
+          //             },
+          //             child: Padding(
+          //               padding: const EdgeInsets.all(20.0),
+          //               child: const Text(
+          //                 'Verde',
+          //                 style: TextStyle(color: Colors.white),
+          //               ),
+          //             ))
+          //         : SizedBox.shrink(),
+          //     const SizedBox(width: 10),
+          //     status
+          //         ? ElevatedButton(
+          //             style: ButtonStyle(
+          //                 backgroundColor:
+          //                     MaterialStateProperty.all<Color>(Colors.blue)),
+          //             onPressed: () async {
+          //               await _sendMulticast('0,0,255,3');
+          //             },
+          //             child: Padding(
+          //               padding: const EdgeInsets.all(20.0),
+          //               child: const Text(
+          //                 'Azúl',
+          //                 style: TextStyle(color: Colors.white),
+          //               ),
+          //             ))
+          //         : SizedBox.shrink(),
+          //   ],
+          // ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Expanded(
+              child: TextField(
+                maxLines: 1,
+                onChanged: (value) {
+                  setState(() {
+                    _inputText = value;
+                  });
+                },
+                decoration: InputDecoration(
+                  labelText: 'Payload',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              maxLines: 1,
+              onChanged: (value) {
+                setState(() {
+                  if (value == '') {
+                    _repeat = 1;
+                  } else {
+                    _repeat = int.parse(value);
+                  }
+                });
+              },
+              decoration: InputDecoration(
+                labelText: 'Repeticiones (def: 1)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              maxLines: 1,
+              onChanged: (value) {
+                setState(() {
+                  if (value == '') {
+                    _delay = 100;
+                  } else {
+                    _delay = int.parse(value);
+                  }
+                });
+              },
+              decoration: InputDecoration(
+                labelText: 'Delay en milisegundos (def: 100)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.green),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white)),
+                onPressed: status && (_inputText?.isNotEmpty ?? false)
+                    ? () async {
+                        for (int i = 0; i < _repeat; i++) {
+                          await _sendMulticast(_inputText!);
+                          _counter++;
+                          await Future.delayed(Duration(milliseconds: 50));
+                        }
+                      }
+                    : null,
+                child: Text('Send'),
+              ),
+            ),
           ),
           SizedBox(height: 10),
           Row(
@@ -140,11 +241,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     setState(() {
                       _log = '';
+                      _counter = 0;
                     });
                   },
                   child: const Text('Clear')),
               SizedBox(width: 10),
-              Text('Total: $counter')
+              Text('Total: $_counter')
             ],
           ),
           Flexible(
