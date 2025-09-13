@@ -21,6 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? _inputText;
   int _repeat = 1;
   int _delay = 100;
+  bool gyroOn = false;
   int x = 0;
   int y = 0;
 
@@ -55,9 +56,13 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _gyroscopeOn() async {}
+  void _gyroscopeOn() async {
+    gyroOn = true;
+  }
 
-  void _gyroscopeOff() async {}
+  void _gyroscopeOff() async {
+    gyroOn = false;
+  }
 
   /*
    * Libera el objeto UDP
@@ -74,7 +79,6 @@ class _MyHomePageState extends State<MyHomePage> {
       status = true;
       setState(() {});
     });
-    _gyroscopeOn();
   }
 
   @override
@@ -173,6 +177,33 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.green),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white)),
+                onPressed: status && (_inputText?.isNotEmpty ?? false)
+                    ? _gyroscopeOn
+                    : null,
+                child: Text('Activar giroscopio'),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.green),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white)),
+                onPressed: status && (_inputText?.isNotEmpty ?? false)
+                    ? _gyroscopeOff
+                    : null,
+                child: Text('Desactivar giroscopio'),
+              )
+            ],
+          ),
           SizedBox(height: 10),
           GyroProvider(
             // gyroscope: (vector) {
@@ -187,7 +218,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
               // log('x: $x');
 
-              _sendMulticast('cube,$x,$y');
+              if (gyroOn) {
+                _sendMulticast('cube,$x,$y');
+              }
 
               return SizedBox.shrink();
             },
