@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:gyro_provider/gyro_provider.dart';
 import 'package:udp/udp.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -20,6 +21,8 @@ class _MyHomePageState extends State<MyHomePage> {
   String? _inputText;
   int _repeat = 1;
   int _delay = 100;
+  int x = 0;
+  int y = 0;
 
   /*
    * Inicializa el objeto UDP
@@ -52,9 +55,9 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _accelerometerOn() async {}
+  void _gyroscopeOn() async {}
 
-  void _accelerometerOff() async {}
+  void _gyroscopeOff() async {}
 
   /*
    * Libera el objeto UDP
@@ -71,6 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
       status = true;
       setState(() {});
     });
+    _gyroscopeOn();
   }
 
   @override
@@ -169,32 +173,26 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          // SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.green),
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.white)),
-                    onPressed: _accelerometerOn,
-                    child: Text('Activar acelerómetro')),
-                ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.green),
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.white)),
-                    onPressed: _accelerometerOff,
-                    child: Text('Desactivar acelerómetro')),
-              ],
-            ),
+          SizedBox(height: 10),
+          GyroProvider(
+            // gyroscope: (vector) {
+            //   log('x: ${vector.x}');
+            // },
+            // rotation: (vector) {
+            //   log('x: ${vector.x}');
+            // },
+            builder: (context, gyroscope, rotation) {
+              y += (gyroscope.x * 20).round();
+              x += (gyroscope.y * 20).round();
+
+              // log('x: $x');
+
+              _sendMulticast('cube,$x,$y');
+
+              return SizedBox.shrink();
+            },
           ),
-          // SizedBox(height: 10),
+          SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -203,6 +201,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     setState(() {
                       _log = '';
                       _counter = 0;
+                      x = 0;
+                      y = 0;
                     });
                   },
                   child: const Text('Limpiar log')),
