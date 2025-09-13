@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 import 'package:udp/udp.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -20,6 +22,14 @@ class _MyHomePageState extends State<MyHomePage> {
   String? _inputText;
   int _repeat = 1;
   int _delay = 100;
+
+  static const Duration _ignoreDuration = Duration(milliseconds: 20);
+  GyroscopeEvent? _gyroscopeEvent;
+  DateTime? _gyroscopeUpdateTime;
+  int? _gyroscopeLastInterval;
+  final _streamSubscriptions = <StreamSubscription<dynamic>>[];
+  Duration sensorInterval = SensorInterval.normalInterval;
+
 
   /*
    * Inicializa el objeto UDP
@@ -52,9 +62,13 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _accelerometerOn() async {}
+  void _gyroscopeOn() async {
+    gyroscopeEventStream(samplingPeriod: sensorInterval);
+  }
 
-  void _accelerometerOff() async {}
+  void _gyroscopeOff() async {
+
+  }
 
   /*
    * Libera el objeto UDP
@@ -71,17 +85,49 @@ class _MyHomePageState extends State<MyHomePage> {
       status = true;
       setState(() {});
     });
+    _streamSubscriptions.add(
+      gyroscopeEventStream(samplingPeriod: sensorInterval).listen(
+            (GyroscopeEvent event) {
+          final now = event.timestamp;
+          setState(() {
+            _gyroscopeEvent = event;
+            if (_gyroscopeUpdateTime != null) {
+              final interval = now.difference(_gyroscopeUpdateTime!);
+              if (interval > _ignoreDuration) {
+                _gyroscopeLastInterval = interval.inMilliseconds;
+              }
+            }
+          });
+          _gyroscopeUpdateTime = now;
+        },
+        onError: (e) {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return const AlertDialog(
+                  title: Text("Sensor Not Found"),
+                  content: Text(
+                      "It seems that your device doesn't support Gyroscope Sensor"),
+                );
+              });
+        },
+        cancelOnError: true,
+      ),
+    );
   }
 
   @override
   void dispose() {
     // Tareas de limpieza
+    super.dispose();
     try {
       _closeSender();
     } catch (e) {
       log(e.toString());
     }
-    super.dispose();
+    for (final subscription in _streamSubscriptions) {
+      subscription.cancel();
+    }
   }
 
   @override
@@ -181,19 +227,23 @@ class _MyHomePageState extends State<MyHomePage> {
                             MaterialStateProperty.all<Color>(Colors.green),
                         foregroundColor:
                             MaterialStateProperty.all<Color>(Colors.white)),
-                    onPressed: _accelerometerOn,
-                    child: Text('Activar acelerómetro')),
+                    onPressed: _gyroscopeOn,
+                    child: Text('Activar giroscopio')),
                 ElevatedButton(
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all<Color>(Colors.green),
                         foregroundColor:
                             MaterialStateProperty.all<Color>(Colors.white)),
-                    onPressed: _accelerometerOff,
-                    child: Text('Desactivar acelerómetro')),
+                    onPressed: _gyroscopeOff,
+                    child: Text('Desactivar giroscopio')),
               ],
             ),
           ),
+          Text(_gyroscopeEvent?.x.toStringAsFixed(1) ?? '?'),
+          Text(_gyroscopeEvent?.y.toStringAsFixed(1) ?? '?'),
+          Text(_gyroscopeEvent?.z.toStringAsFixed(1) ?? '?'),
+          Text('${_gyroscopeLastInterval?.toString() ?? '?'} ms'),
           // SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
