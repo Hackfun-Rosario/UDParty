@@ -52,6 +52,10 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void _accelerometerOn() async {}
+
+  void _accelerometerOff() async {}
+
   /*
    * Libera el objeto UDP
    */
@@ -161,11 +165,36 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: status && (_inputText?.isNotEmpty ?? false)
                     ? _submit
                     : null,
-                child: Text('Send'),
+                child: Text('Enviar'),
               ),
             ),
           ),
-          SizedBox(height: 10),
+          // SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.green),
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white)),
+                    onPressed: _accelerometerOn,
+                    child: Text('Activar acelerómetro')),
+                ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.green),
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white)),
+                    onPressed: _accelerometerOff,
+                    child: Text('Desactivar acelerómetro')),
+              ],
+            ),
+          ),
+          // SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -176,9 +205,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       _counter = 0;
                     });
                   },
-                  child: const Text('Clear')),
+                  child: const Text('Limpiar log')),
               SizedBox(width: 10),
-              Text('Total: $_counter')
+              Text('Paquetes enviados: $_counter')
             ],
           ),
           Flexible(
