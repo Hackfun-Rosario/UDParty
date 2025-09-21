@@ -19,23 +19,20 @@ class _PerspectivaPageState extends State<PerspectivaPage> {
   void initState() {
     super.initState();
     GetIt.I<UDPController>().gyroscopeOn();
-    GetIt.I<UDPController>().sendMulticast('cube');
-    GetIt.I<UDPController>().sendMulticast('cube');
-    GetIt.I<UDPController>().sendMulticast('cube');
+    GetIt.I<UDPController>().sendBroadcast('cube', force: true);
   }
 
   @override
   void dispose() {
     super.dispose();
     GetIt.I<UDPController>().gyroscopeOff();
+    GetIt.I<UDPController>().sendBroadcast('standby', force: true);
   }
 
   @override
   Widget build(BuildContext context) {
     GetIt.I<UDPController>().gyroscopeOn();
-    GetIt.I<UDPController>().sendMulticast('cube');
-    GetIt.I<UDPController>().sendMulticast('cube');
-    GetIt.I<UDPController>().sendMulticast('cube');
+    GetIt.I<UDPController>().sendBroadcast('cube', force: true);
 
     return Scaffold(
       appBar: AppBar(
@@ -57,7 +54,7 @@ class _PerspectivaPageState extends State<PerspectivaPage> {
               x += (gyroscope.y * 20).round();
               // log('x: $x');
               if (GetIt.I<UDPController>().gyroOn) {
-                GetIt.I<UDPController>().sendMulticast('cube,$x,$y');
+                GetIt.I<UDPController>().sendBroadcast('cube,$x,$y');
               }
               return SizedBox.shrink();
             },

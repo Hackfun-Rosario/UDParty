@@ -12,16 +12,22 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool udpInitialized = false;
+
+  Future<void> initSender() async {
+    GetIt.I<UDPController>().initSender().then((_) {
+      udpInitialized = true;
+      GetIt.I<UDPController>().sendBroadcast('standby', force: true);
+      setState(() {});
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    GetIt.I<UDPController>().initSender().then((_) {
-      udpInitialized = true;
-      GetIt.I<UDPController>().sendMulticast('standby');
-      setState(() {});
+    initSender().then((_) {
+      GetIt.I<UDPController>().sendBroadcast('standby', force: true);
     });
   }
 
@@ -38,12 +44,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    GetIt.I<UDPController>().sendMulticast('standby');
+    GetIt.I<UDPController>().sendBroadcast('standby', force: true);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('UDParty'),
+        title: GestureDetector(
+            onTap: () =>
+                GetIt.I<UDPController>().sendBroadcast('standby', force: true),
+            child: Text('UDParty')),
       ),
       body: SingleChildScrollView(
         child: Column(

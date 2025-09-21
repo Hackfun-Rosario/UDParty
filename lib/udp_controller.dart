@@ -25,18 +25,19 @@ class UDPController {
     sender?.close();
   }
 
-
   /*
    * Envía un mensaje por UDP
    */
-  Future<void> sendMulticast(String msg) async {
-    await sender?.send(msg.codeUnits, multicastEndpoint!);
-
-    // setState(() {
-    //   _log += '\nEnviado: $msg';
-    // });
+  Future<void> sendBroadcast(String msg, {bool force = false}) async {
+    int repetitions = 0;
+    if (force) {
+      repetitions = 2;
+    }
+    do {
+      await sender?.send(msg.codeUnits, multicastEndpoint!);
+      repetitions++;
+    } while (repetitions < 3);
   }
-
 
   void gyroscopeOn() async {
     gyroOn = true;
@@ -45,5 +46,4 @@ class UDPController {
   void gyroscopeOff() async {
     gyroOn = false;
   }
-
 }

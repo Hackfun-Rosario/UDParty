@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:gyro_provider/gyro_provider.dart';
 
 import '../udp_controller.dart';
 
@@ -19,18 +18,22 @@ class _DebugPageState extends State<DebugPage> {
   int _repeat = 1;
   int _delay = 100;
   String? _inputText;
-  int x = 0;
-  int y = 0;
 
   @override
   void initState() {
     super.initState();
+    GetIt.I<UDPController>().sendBroadcast('standby', force: true);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    GetIt.I<UDPController>().sendBroadcast('standby', force: true);
   }
 
   void _submit() async {
     for (int i = 0; i < _repeat; i++) {
-      GetIt.I<UDPController>().sendMulticast(_inputText!);
-      // await _sendMulticast(_inputText!);
+      GetIt.I<UDPController>().sendBroadcast(_inputText!);
       _counter++;
       await Future.delayed(Duration(milliseconds: _delay));
     }
@@ -38,12 +41,10 @@ class _DebugPageState extends State<DebugPage> {
 
   @override
   Widget build(BuildContext context) {
-    GetIt.I<UDPController>().sendMulticast('cube');
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('Perspectiva'),
+        title: Text('Debug'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,54 +122,6 @@ class _DebugPageState extends State<DebugPage> {
               ),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.green),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white)),
-                onPressed: _inputText?.isNotEmpty ?? false
-                    ? GetIt.I<UDPController>().gyroscopeOn
-                    : null,
-                child: Text('Activar giroscopio'),
-              ),
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.green),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white)),
-                onPressed: _inputText?.isNotEmpty ?? false
-                    ? GetIt.I<UDPController>().gyroscopeOff
-                    : null,
-                child: Text('Desactivar giroscopio'),
-              )
-            ],
-          ),
-          SizedBox(height: 10),
-          GyroProvider(
-            // gyroscope: (vector) {
-            //   log('x: ${vector.x}');
-            // },
-            // rotation: (vector) {
-            //   log('x: ${vector.x}');
-            // },
-            builder: (context, gyroscope, rotation) {
-              y += (gyroscope.x * 20).round();
-              x += (gyroscope.y * 20).round();
-
-              // log('x: $x');
-
-              if (GetIt.I<UDPController>().gyroOn) {
-                GetIt.I<UDPController>().sendMulticast('cube,$x,$y');
-              }
-
-              return SizedBox.shrink();
-            },
-          ),
           SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -178,8 +131,6 @@ class _DebugPageState extends State<DebugPage> {
                     setState(() {
                       _log = '';
                       _counter = 0;
-                      x = 0;
-                      y = 0;
                     });
                   },
                   child: const Text('Limpiar log')),
