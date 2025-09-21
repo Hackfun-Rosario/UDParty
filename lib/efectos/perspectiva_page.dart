@@ -50,8 +50,8 @@ class _PerspectivaPageState extends State<PerspectivaPage> {
             //   log('x: ${vector.x}');
             // },
             builder: (context, gyroscope, rotation) {
-              y += (gyroscope.x * 20).round();
-              x += (gyroscope.y * 20).round();
+              y += (gyroscope.x * 8).round();
+              x += (gyroscope.y * 8).round();
               // log('x: $x');
               if (GetIt.I<UDPController>().gyroOn) {
                 GetIt.I<UDPController>().sendBroadcast('cube,$x,$y');
