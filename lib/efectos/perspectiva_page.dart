@@ -70,7 +70,7 @@ class _PerspectivaPageState extends State<PerspectivaPage> {
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Text('Centrar'),
+                    child: Text('Centrar', style: Theme.of(context).textTheme.titleLarge,),
                   )),
             ),
           ),

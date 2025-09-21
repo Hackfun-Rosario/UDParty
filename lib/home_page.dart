@@ -71,8 +71,38 @@ class _HomePageState extends State<HomePage> {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Image.asset('assets/img/perspectiva.png'),
-                        Text('Usa el giroscopio para simular perspectiva', style: Theme.of(context).textTheme.titleLarge,)
+                        ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: Image.asset('assets/img/perspectiva.png')),
+                        Text(
+                          'Usa el giroscopio para simular perspectiva',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: udpInitialized ? () => context.push('/video') : null,
+              child: Card(
+                color: Colors.deepOrangeAccent,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    title: Text('Video',
+                        style: Theme.of(context).textTheme.displaySmall),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: Image.asset('assets/img/video.png')),
+                        Text(
+                          'Reproduce un video en loop',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        )
                       ],
                     ),
                   ),
@@ -92,8 +122,11 @@ class _HomePageState extends State<HomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Image.asset('assets/img/carrera.png'),
-                        SizedBox(height:100, child: Placeholder()),
-                        Text('Juego de carrera multipantalla (1x3)', style: Theme.of(context).textTheme.titleLarge,)
+                        SizedBox(height: 100, child: Placeholder()),
+                        Text(
+                          'Juego de carrera multipantalla (1x3)',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        )
                       ],
                     ),
                   ),

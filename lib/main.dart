@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:udparty/udp_controller.dart';
 
+import 'efectos/video_page.dart';
 import 'home_page.dart';
 import 'efectos/debug_page.dart';
 import 'efectos/perspectiva_page.dart';
@@ -31,6 +32,10 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: '/perspectiva',
           builder: (context, state) => PerspectivaPage(),
+        ),
+        GoRoute(
+          path: '/video',
+          builder: (context, state) => VideoPage(),
         ),
         GoRoute(
           path: '/carrera',
