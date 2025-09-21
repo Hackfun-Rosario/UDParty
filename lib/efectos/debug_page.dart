@@ -1,17 +1,19 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:gyro_provider/gyro_provider.dart';
 
 import '../udp_controller.dart';
 
-class PerspectivaPage extends StatefulWidget {
-  const PerspectivaPage({super.key});
+class DebugPage extends StatefulWidget {
+  const DebugPage({super.key});
 
   @override
-  State<PerspectivaPage> createState() => _PerspectivaPageState();
+  State<DebugPage> createState() => _DebugPageState();
 }
 
-class _PerspectivaPageState extends State<PerspectivaPage> {
+class _DebugPageState extends State<DebugPage> {
   String _log = '';
   int _counter = 0;
   int _repeat = 1;
@@ -19,6 +21,11 @@ class _PerspectivaPageState extends State<PerspectivaPage> {
   String? _inputText;
   int x = 0;
   int y = 0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void _submit() async {
     for (int i = 0; i < _repeat; i++) {
@@ -31,6 +38,8 @@ class _PerspectivaPageState extends State<PerspectivaPage> {
 
   @override
   Widget build(BuildContext context) {
+    GetIt.I<UDPController>().sendMulticast('cube');
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,

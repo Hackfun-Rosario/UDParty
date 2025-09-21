@@ -3,7 +3,8 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:udparty/udp_controller.dart';
 
-import 'cubo/perspectiva_page.dart';
+import 'efectos/debug_page.dart';
+import 'efectos/perspectiva_page.dart';
 import 'home_page.dart';
 
 void main() {
@@ -23,6 +24,10 @@ class MyApp extends StatelessWidget {
           builder: (context, state) => HomePage(),
         ),
         GoRoute(
+          path: '/debug',
+          builder: (context, state) => DebugPage(),
+        ),
+        GoRoute(
           path: '/perspectiva',
           builder: (context, state) => PerspectivaPage(),
         ),
@@ -32,7 +37,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'UDParty',
       routerConfig: router,
-
       theme: ThemeData(
         brightness: Brightness.dark,
         colorScheme: ColorScheme.dark(),
