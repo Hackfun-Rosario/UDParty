@@ -3,9 +3,10 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:udparty/udp_controller.dart';
 
+import 'home_page.dart';
 import 'efectos/debug_page.dart';
 import 'efectos/perspectiva_page.dart';
-import 'home_page.dart';
+import 'efectos/carrera_page.dart';
 
 void main() {
   GetIt.I.registerSingleton<UDPController>(UDPController());
@@ -30,6 +31,10 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: '/perspectiva',
           builder: (context, state) => PerspectivaPage(),
+        ),
+        GoRoute(
+          path: '/carrera',
+          builder: (context, state) => CarreraPage(),
         ),
       ],
     );
