@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
           builder: (context, state) => HomePage(),
         ),
         GoRoute(
-          path: '/cube',
+          path: '/perspectiva',
           builder: (context, state) => PerspectivaPage(),
         ),
       ],
@@ -32,8 +32,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'UDParty',
       routerConfig: router,
+
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.dark(),
+        cardColor: Colors.white24,
         useMaterial3: true,
       ),
     );

@@ -42,26 +42,23 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('UDParty'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Perspectiva', style: Theme.of(context).textTheme.displayMedium),
-          ElevatedButton(
-            style: udpInitialized
-                ? ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.green),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white))
-                : ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.grey),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white)),
-            onPressed: udpInitialized ? () => context.push('/cube') : null,
-            child: Text('Abrir Perspectiva'),
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: udpInitialized ? () => context.push('/cube') : null,
+              child: Card(
+                color: Theme.of(context).cardColor,
+                child: ListTile(
+                  title: Text('Perspectiva',
+                      style: Theme.of(context).textTheme.displaySmall),
+                  subtitle: Image.asset('assets/img/perspectiva.png'),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
