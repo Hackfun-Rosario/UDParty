@@ -10,8 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  get_it: ^8.2.0
   gyro_provider: ^0.1.0
   udp: ^5.0.3
+  watch_it: ^1.7.0
 
 
 dev_dependencies:

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:udparty/udp_controller.dart';
 
 import 'home_page.dart';
 
 void main() {
+  GetIt.I.registerSingleton<UDPController>(UDPController());
+
   runApp(const MyApp());
 }
 

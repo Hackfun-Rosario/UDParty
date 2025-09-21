@@ -1,8 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:gyro_provider/gyro_provider.dart';
-import 'package:udp/udp.dart';
+import 'package:udparty/udp_controller.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -13,70 +14,20 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String _log = '';
-  UDP? sender;
-  UDP? receiver;
-  Endpoint? multicastEndpoint;
   int _counter = 0;
-  bool status = false;
+  bool udpInitialized = false;
   String? _inputText;
   int _repeat = 1;
   int _delay = 100;
-  bool gyroOn = false;
+
   int x = 0;
   int y = 0;
-
-  /*
-   * Inicializa el objeto UDP
-   */
-  Future<void> _initSender() async {
-    setState(() {
-      _log += '\nInicializando...';
-    });
-    sender = await UDP.bind(Endpoint.any());
-    setState(() {
-      _log += '\nListo!';
-    });
-  }
-
-  /*
-   * Envía un mensaje por UDP
-   */
-  Future<void> _sendMulticast(String msg) async {
-    await sender?.send(msg.codeUnits, multicastEndpoint!);
-    setState(() {
-      _log += '\nEnviado: $msg';
-    });
-  }
-
-  void _submit() async {
-    for (int i = 0; i < _repeat; i++) {
-      await _sendMulticast(_inputText!);
-      _counter++;
-      await Future.delayed(Duration(milliseconds: _delay));
-    }
-  }
-
-  void _gyroscopeOn() async {
-    gyroOn = true;
-  }
-
-  void _gyroscopeOff() async {
-    gyroOn = false;
-  }
-
-  /*
-   * Libera el objeto UDP
-   */
-  void _closeSender() {
-    sender?.close();
-  }
 
   @override
   void initState() {
     super.initState();
-    multicastEndpoint = Endpoint.broadcast(port: const Port(12345));
-    _initSender().then((_) {
-      status = true;
+    GetIt.I<UDPController>().initSender().then((_) {
+      udpInitialized = true;
       setState(() {});
     });
   }
@@ -85,11 +36,20 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     // Tareas de limpieza
     try {
-      _closeSender();
+      GetIt.I<UDPController>().closeSender();
     } catch (e) {
       log(e.toString());
     }
     super.dispose();
+  }
+
+  void _submit() async {
+    for (int i = 0; i < _repeat; i++) {
+      GetIt.I<UDPController>().sendMulticast(_inputText!);
+      // await _sendMulticast(_inputText!);
+      _counter++;
+      await Future.delayed(Duration(milliseconds: _delay));
+    }
   }
 
   @override
@@ -170,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         MaterialStateProperty.all<Color>(Colors.green),
                     foregroundColor:
                         MaterialStateProperty.all<Color>(Colors.white)),
-                onPressed: status && (_inputText?.isNotEmpty ?? false)
+                onPressed: udpInitialized && (_inputText?.isNotEmpty ?? false)
                     ? _submit
                     : null,
                 child: Text('Enviar'),
@@ -186,8 +146,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         MaterialStateProperty.all<Color>(Colors.green),
                     foregroundColor:
                         MaterialStateProperty.all<Color>(Colors.white)),
-                onPressed: status && (_inputText?.isNotEmpty ?? false)
-                    ? _gyroscopeOn
+                onPressed: udpInitialized && (_inputText?.isNotEmpty ?? false)
+                    ? GetIt.I<UDPController>().gyroscopeOn
                     : null,
                 child: Text('Activar giroscopio'),
               ),
@@ -197,8 +157,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         MaterialStateProperty.all<Color>(Colors.green),
                     foregroundColor:
                         MaterialStateProperty.all<Color>(Colors.white)),
-                onPressed: status && (_inputText?.isNotEmpty ?? false)
-                    ? _gyroscopeOff
+                onPressed: udpInitialized && (_inputText?.isNotEmpty ?? false)
+                    ? GetIt.I<UDPController>().gyroscopeOff
                     : null,
                 child: Text('Desactivar giroscopio'),
               )
@@ -218,8 +178,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
               // log('x: $x');
 
-              if (gyroOn) {
-                _sendMulticast('cube,$x,$y');
+              if (GetIt.I<UDPController>().gyroOn) {
+                GetIt.I<UDPController>().sendMulticast('cube,$x,$y');
               }
 
               return SizedBox.shrink();
