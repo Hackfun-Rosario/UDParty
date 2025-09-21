@@ -60,31 +60,6 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GestureDetector(
-              onTap: udpInitialized ? () => context.push('/perspectiva') : null,
-              child: Card(
-                color: Colors.deepPurple,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text('Perspectiva',
-                        style: Theme.of(context).textTheme.displaySmall),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: Image.asset('assets/img/perspectiva.png')),
-                        Text(
-                          'Usa el giroscopio para simular perspectiva',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            GestureDetector(
               onTap: udpInitialized ? () => context.push('/video') : null,
               child: Card(
                 color: Colors.deepOrangeAccent,
@@ -101,6 +76,81 @@ class _HomePageState extends State<HomePage> {
                             child: Image.asset('assets/img/video.png')),
                         Text(
                           'Reproduce un video en loop',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            GestureDetector(
+              // onTap: udpInitialized ? () => context.push('/blink') : null,
+              onTap: () {
+                showDialog(
+                  builder: (_) => SimpleDialog(
+                    title: Text('En construcción', style: Theme.of(context).textTheme.headlineSmall,),
+                    children: <Widget>[
+                      SimpleDialogOption(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Cerrar'),
+                      ),
+                    ],
+                  ), context: context,
+                );
+              },
+              child: Card(
+                color: Colors.pink,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    title: Text('Blink',
+                        style: Theme.of(context).textTheme.displaySmall),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: Container(
+                            height: 250,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [Colors.blueAccent, Colors.lightGreen],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Text(
+                          'Parpadea la pantalla con colores',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: udpInitialized ? () => context.push('/perspectiva') : null,
+              child: Card(
+                color: Colors.deepPurple,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    title: Text('Perspectiva',
+                        style: Theme.of(context).textTheme.displaySmall),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: Image.asset('assets/img/perspectiva.png')),
+                        Text(
+                          'Usa el giroscopio para simular perspectiva',
                           style: Theme.of(context).textTheme.titleLarge,
                         )
                       ],
