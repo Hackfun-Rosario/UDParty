@@ -34,8 +34,6 @@ class _CarreraPageState extends State<CarreraPage> {
     GetIt.I<UDPController>().gyroscopeOn();
     GetIt.I<UDPController>().sendBroadcast('carrera', force: true);
 
-    // int lastUpdate = DateTime.now().millisecondsSinceEpoch;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -53,15 +51,13 @@ class _CarreraPageState extends State<CarreraPage> {
             // },
             builder: (context, gyroscope, rotation) {
               // y += (gyroscope.x * 8).round();
-              y += (gyroscope.x * ).round();
+              y += (gyroscope.x * 6).round();
               x += (gyroscope.y * 8).round();
               // log('x: $x');
               if (GetIt.I<UDPController>().gyroOn) {
-                // final currentTime = DateTime.now().millisecondsSinceEpoch;
-                // if (currentTime - lastUpdate > 50) {
+
                   GetIt.I<UDPController>().sendBroadcast('carrera,$x,$y');
-                  // lastUpdate = currentTime;
-                // }
+
               }
               return SizedBox.shrink();
             },
